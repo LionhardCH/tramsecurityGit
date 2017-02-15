@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>AirQuality</title>
+	<link href="https://fonts.googleapis.com/css?family=Lato|Pontano+Sans|Arsenal|Dosis|Michroma" rel="stylesheet">
+  <link href="../../css/air_quality.css" rel="stylesheet">
+  <script type="text/javascript" src="../../javascript/rainbow.js"></script>
+	<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
+  </head>
+  <body>
+    <div id ="texte"><font>OPEN</FONT> <b>AIR QUALITY</b> </div><div id="texte2" class="rechts">Instructions&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;Contact</div>
+    <div id ="texte3"></div>
+    <div id ="logo"></div>
+    <div id="map"></div>
+    <div id="graphics"></div>
+    <script>
+
+      var map;
+
+      var rainbow = new Rainbow();
+      rainbow.setSpectrum('green', 'yellow', 'red');
+
+      var citymap = [
+        {
+          center: {lat: 48.388289, lng: 8.526612},
+          radius: 30
+        },
+        {
+          center: {lat: 48.388289, lng: 8.5296612},
+          radius: 40
+        },
+        {
+          center: {lat: 48.38288289, lng: 8.536612},
+          radius: 25
+        },
+        {
+          center: {lat: 48.3798289, lng: 8.526612},
+          radius: 40
+        }
+    ];
+    //alert(citymap[0].center.lat);
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+
+
+    function initMap() {
+    // Create the map.
+    map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 17,
+      center: {lat: 47.385508, lng: 8.521312},
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      zoomControl: true,
+      scaleControl: false,
+      mapTypeControlOptions: {
+        mapTypeIds: [google.maps.MapTypeId.TERRAIN]
+      },
+      disableDefaultUI: true,
+      // How you would like to style the map. 
+      // This is where you would paste any style found on Snazzy Maps.
+      styles:[{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#485b77"},{"visibility":"on"}]},{"featureType": "road.highway","elementType": "all","stylers": [{"visibility": "off"}]}]
+
+      });
+
+      // Construct the circle for each value in citymap.
+      // Note: We scale the area of the circle based on the population.
+      for (var city in citymap) {
+        // Add the circle for this city to the map.
+        var cityCircle = new google.maps.Circle({
+          strokeColor: '#FF0000',
+          strokeOpacity: 0,
+          strokeWeight: 1.0,
+          fillColor: '#FF0000',
+          fillOpacity: 0.35,
+          map: map,
+          center: citymap[city].center,
+          radius: citymap[city].radius
+        });
+      }
+    }
+
+    var pusher = new Pusher('256b563cc59616398c15', {
+      cluster: 'eu',
+      encrypted: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+    
+    var new_measurement = {
+      pm10: data.pm10,
+    pm25: data.pm25,
+    latitude: parseFloat(data.latitude),
+    longitude: parseFloat(data.longitude),
+    timestamp: data.timestamp,
+    meas_id: data.meas_id,
+    isValid: data.isValid 
+    };	
+
+    // add new measurement to the map
+    var cityCircle = new google.maps.Circle({
+      strokeColor: '#'+rainbow.colourAt(new_measurement.pm25),
+      strokeOpacity: 0,
+      strokeWeight: 1.0,
+      fillColor: '#'+rainbow.colourAt(new_measurement.pm25),
+      fillOpacity: 0.35,
+      map: map,
+      center: {lat: new_measurement.latitude, lng: new_measurement.longitude},
+      radius: 15
+      });
+
+    //alert(new_measurement.longitude);
+
+    });
+
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBKjS-7cG6NT3CnddYbeWag3hKQIHuBosU&signed_in=true&callback=initMap"></script>
+  </body>
+</html>
