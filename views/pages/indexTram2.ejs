@@ -51,11 +51,12 @@
     map = new google.maps.Map(document.getElementById('map'), {
       zoom: 18,
       center: {lat: 47.377177, lng: 8.547142},
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      mapTypeId: google.maps.MapTypeId.SATELLITE,
       zoomControl: true,
       scaleControl: false,
+	  
       mapTypeControlOptions: {
-        mapTypeIds: [google.maps.MapTypeId.TERRAIN]
+        mapTypeIds: [google.maps.MapTypeId.SATELLITE]
       },
       disableDefaultUI: true,
       // How you would like to style the map. 
@@ -79,6 +80,8 @@
           radius: citymap[city].radius
         });
       }
+	  
+	  map.setTilt(45);
     }
 
     var pusher = new Pusher('256b563cc59616398c15', {
