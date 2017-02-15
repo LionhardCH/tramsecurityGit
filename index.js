@@ -56,8 +56,8 @@ app.get('/sendfakedata', function(request, response) {
     pusher.trigger('my-channel', 'my-event', {
         "pm10": '34',
         "pm25": '30',
-        "latitude": '47.377195',
-        "longitude": '8.544274',
+        "latitude": '47.377405',
+        "longitude": '8.548279',
         "timestamp": '2343242',
         "meas_id": '4342',
         "isValid": 'true'
@@ -187,8 +187,8 @@ app.get('/sendfakedata', function(request, response) {
     pusher.trigger('my-channel', 'my-event', {
         "pm10": '34',
         "pm25": '90',
-        "latitude": '47.377231',
-        "longitude": '8.547453',
+        "latitude": '47.377181',
+        "longitude": '8.547656',
         "timestamp": '2343243',
         "meas_id": '4342',
         "isValid": 'true'
