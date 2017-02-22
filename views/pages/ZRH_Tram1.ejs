@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>TramSecurity</title>
+	<link href="https://fonts.googleapis.com/css?family=Lato|Pontano+Sans|Arsenal|Dosis|Michroma" rel="stylesheet">
+	<link href="../../css/tram_security.css" rel="stylesheet">
+	<script type="text/javascript" src="../../javascript/rainbow.js"></script>
+	<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
+	
+	<style>
+	body{
+		background-color: #0000ff;
+	}
+	h1{
+		color: white;
+		text-align: center;
+	}
+	#floating-panel {
+        position: absolute;
+		dragable: true;
+        top: 100px;
+        left: 35%;
+        z-index: 5;
+        background-color: #0000ff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+	</style>
+	
+  </head>
+  <body>
+  <h1> Zurich Tram - Security online</h1>
+   
+   <div id ="logo"></div>
+	<div id="map"></div>   
+	<div id="floating-panel">
+      <input onclick="moveTram();" type=button value="Move a tram">
+      <input onclick="movePerson();" type=button value="Move a Person">
+    </div>
+
+	<script>
+
+	var map;
+	var rainbow = new Rainbow();
+	rainbow.setSpectrum('green', 'yellow', 'red');
+	
+    function initMap() {
+		var ZurichCentral={lat: 47.376858, lng: 8.543926};
+		var IVP_buero={lat: 47.377181, lng: 8.547656};
+
+		var mapOptions={
+			zoom: 18,
+			center: ZurichCentral,
+			mapTypeId: google.maps.MapTypeId.SATELLITE,
+			zoomControl: true,
+			scaleControl: false,
+			mapTypeId:google.maps.MapTypeId.SATELLITE,
+	// How you would like to style the map. 
+    // This is where you would paste any style found on Snazzy Maps.
+   			styles:[{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"transit.line","elementType":"geometry.fill","stylers":[{"color":"#ff9900"},{"gamma":"1"},{"weight":"1.80"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#485b77"},{"visibility":"on"}]},{"featureType": "road.highway","elementType": "all","stylers": [{"visibility": "off"}]}]
+      		}
+    // Create the map.
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+	  map.setTilt(45);	  
+    }
+
+    var pusher = new Pusher('2414aa74ed13a613c3c9', {
+      cluster: 'eu',
+      encrypted: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+	channel.bind('my-event', function(data) {
+    
+    var new_measurement = {
+    
+    latitude: parseFloat(data.latitude),
+    longitude: parseFloat(data.longitude),
+    timestamp: data.timestamp,
+    meas_id: data.meas_id,
+    isValid: data.isValid 
+    };	
+
+    // add new measurement to the map
+    var cityCircle = new google.maps.Circle({
+      strokeColor: '#FF0000',
+	  strokeOpacity: 0,
+      strokeWeight: 1.0,
+	  fillColor: '#00ff7b',
+   	  fillOpacity: 0.35,
+      map: map,
+      center: {lat: new_measurement.latitude, lng: new_measurement.longitude},
+      radius: 10
+	//center: citymap[city].center,
+	// radius: citymap[city].radius
+      });
+
+    });
+
+	function moveTram(){
+		console.log('inside moveTramfunction 3');
+		var timeGPS=[2343243,2343265,2343287,2343308,2343330,2343351,2343373,2343394,2343416,2343437,2343459,2343480,2343502,2343523,2343545,2343566,2343588,2343609,2343631,2343652,2343674,2343695,2343717,2343738,2343760,2343781,2343803,2343824,2343846,2343867,2343889,2343910,2343932,2343953,2343975,2343996,2344018,2344039,2344061,2344082];
+		var latGPS=[47.375596396293538,47.375873768676485,47.376145907456156,47.376357059482210,47.376559966823692,47.376647154203965,47.376746151780431,47.376872092591952,47.376954576714859,47.376880799974039,47.376858728935460,47.376826936701626,47.376826936701626,47.377172879213504,47.377380927764975,47.377753550641714,47.378172914985882,47.378610319558263,47.378863229495920,47.378888022403103,47.378891303679801,47.378874658574162,47.378904456192956,47.378966850315898,47.379034511379004,47.379100450474063,47.379181896218356,47.379265562312646,47.379443183057695,47.379647191927234,47.379793571815078,47.379913149789985,47.380022919298874,47.380124207624256,47.380208692160735,47.380285886698722,47.380253227948685,47.380210617783838,47.380349859349074,47.380491568826066];
+		var longGPS=[8.543399488161594,8.543498990666215,8.543594178532889,8.543644959466207,8.543700225669664,8.543765009744792,8.543822994026066,8.543837758885269,8.543894333032696,8.544075103698344,8.544165993617757,8.544015841669548,8.543727160524007,8.543935644028437,8.543900648523682,8.543782420327835,8.543674812912256,8.543592889459122,8.543663548811551,8.543896090656975,8.544062997652070,8.544155463523380,8.544237465080371,8.544305053145147,8.544470785334925,8.544684949764426,8.544897550505157,8.545094854737140,8.545573543256765,8.546134654228137,8.546628553917028,8.547071900834460,8.547361841535562,8.547599296460836,8.547785126711398,8.547952471658199,8.547952660003507,8.547935199242861,8.548181978842148,8.548430222535881];
+		
+		var count=0;
+		var intervalObject= setInterval(function(){	
+			var longa=longGPS[count];
+			var longstr=longa.toString();
+			var lata=latGPS[count];
+			var latstr=lata.toString();
+			var tima=timeGPS[count];
+			var timestr=tima.toString();
+			console.log(count,'longit: ',longstr,' lat:',latstr);
+			//pusher.trigger('my-channel', 'my-event', {
+			//		"latitude": latstr,
+			//		"longitude": longstr,
+			//		"timestamp": timestr,
+			//		"meas_id": '8',
+			//		"isValid": 'true'
+			//}); 
+			count++;		
+			if (count ==40){
+				console.log(count, 'exiting');
+				clearInterval(intervalObject);
+			}
+		}, 1000);     	
+    response.render('pages/personsandobjectsmoving');
+	}
+	
+    </script>
+    <script async defer
+//API auf lionhard.schneider@gmail.com registriert
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk8lXjSU5A7JxXFBkwBTRySKUDXbA9AKg&signed_in=true&callback=initMap"></script>
+  
+  </body>
+</html>

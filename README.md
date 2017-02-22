@@ -1,7 +1,6 @@
-# MakeZurich 2017 
+# 	Tram Security
 
 - NodeJs App
-- Subscribes data stream from thethingsnetwork.org (MQTT)
-- Writes the data stream to the database
+- simulates data stream from resources.
 - The live data stream visualized in a map (Google Maps)
 

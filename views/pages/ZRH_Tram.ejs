@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>TramSecurity</title>
+	<link href="https://fonts.googleapis.com/css?family=Lato|Pontano+Sans|Arsenal|Dosis|Michroma" rel="stylesheet">
+  <link href="../../css/tram_security.css" rel="stylesheet">
+  <script type="text/javascript" src="../../javascript/rainbow.js"></script>
+	<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
+	
+	<style>
+	body{
+		background-color: #0000ff;
+	}
+	h1{
+		color: white;
+		text-align: center;
+	}
+	</style>
+	
+  </head>
+  <body>
+  <h1> Zurich Tram - Security online</h1>
+   
+   	<div id ="logo"></div>
+	<div id="map"></div>   
+
+   <script>
+
+      var map;
+
+      var rainbow = new Rainbow();
+      rainbow.setSpectrum('green', 'yellow', 'red');
+
+    Pusher.logToConsole = true;
+
+
+
+    function initMap() {
+		var mapOptions={
+			zoom: 18,
+			center: {lat: 47.377181, lng: 8.547656},
+			mapTypeId: google.maps.MapTypeId.SATELLITE,
+			zoomControl: true,
+			scaleControl: false,
+			mapTypeId:google.maps.MapTypeId.SATELLITE,
+			//disableDefaultUI: true,
+	// How you would like to style the map. 
+    // This is where you would paste any style found on Snazzy Maps.
+   			styles:[{"stylers":[{"saturation":-100},{"gamma":1}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"transit.line","elementType":"geometry.fill","stylers":[{"color":"#ff9900"},{"gamma":"1"},{"weight":"1.80"}]},{"featureType":"poi.business","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"poi.place_of_worship","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"}]},{"featureType":"water","stylers":[{"visibility":"on"},{"saturation":50},{"gamma":0},{"hue":"#50a5d1"}]},{"featureType":"administrative.neighborhood","elementType":"labels.text.fill","stylers":[{"color":"#333333"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"weight":0.5},{"color":"#333333"}]},{"featureType":"transit.station","elementType":"labels.icon","stylers":[{"gamma":1},{"saturation":50}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#485b77"},{"visibility":"on"}]},{"featureType": "road.highway","elementType": "all","stylers": [{"visibility": "off"}]}]
+      		}
+				
+    // Create the map.
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+	  map.setTilt(45);
+	  
+    }
+
+    var pusher = new Pusher('2414aa74ed13a613c3c9', {
+      cluster: 'eu',
+      encrypted: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+    
+    var new_measurement = {
+    pm10: data.pm10,
+    pm25: data.pm25,
+    latitude: parseFloat(data.latitude),
+    longitude: parseFloat(data.longitude),
+    timestamp: data.timestamp,
+    meas_id: data.meas_id,
+    isValid: data.isValid 
+    };	
+
+    // add new measurement to the map
+    var cityCircle = new google.maps.Circle({
+      strokeColor: '#'+rainbow.colourAt(new_measurement.pm25),
+      strokeOpacity: 0,
+      strokeWeight: 1.0,
+      //fillColor: '#'+rainbow.colourAt(new_measurement.pm25),
+	  fillColor: '#0004ff',
+	        
+	  fillOpacity: 0.35,
+      map: map,
+      center: {lat: new_measurement.latitude, lng: new_measurement.longitude},
+      radius: 10
+	//center: citymap[city].center,
+	// radius: citymap[city].radius
+      });
+
+    //alert(new_measurement.longitude);
+
+    });
+
+    </script>
+    <script async defer
+//API auf lionhard.schneider@gmail.com registriert
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk8lXjSU5A7JxXFBkwBTRySKUDXbA9AKg&signed_in=true&callback=initMap"></script>
+  
+  </body>
+</html>
