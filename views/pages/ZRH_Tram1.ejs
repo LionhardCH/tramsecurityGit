@@ -41,7 +41,7 @@
 	<div id="map"></div>   
 	<div id="floating-panel">
       <input onclick="moveTram();" type=button value="Move a tram">
-      <input onclick="movePerson();" type=button value="Move a Person">
+    
     </div>
 
 	<script>
@@ -118,13 +118,13 @@
 			var tima=timeGPS[count];
 			var timestr=tima.toString();
 			console.log(count,'longit: ',longstr,' lat:',latstr);
-			//pusher.trigger('my-channel', 'my-event', {
-			//		"latitude": latstr,
-			//		"longitude": longstr,
-			//		"timestamp": timestr,
-			//		"meas_id": '8',
-			//		"isValid": 'true'
-			//}); 
+			pusher.trigger('my-channel', 'my-event', {
+				"latitude": latstr,
+				"longitude": longstr,
+				"timestamp": timestr,
+				"meas_id": '8',
+				"isValid": 'true'
+			}); 
 			count++;		
 			if (count ==40){
 				console.log(count, 'exiting');
